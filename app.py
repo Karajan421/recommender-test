@@ -8,7 +8,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = flask.Flask(__name__, template_folder='templates')
 
 df2 = pd.read_csv('./model/small_model.csv')
-df2 = df2[95000:]
 df2 = df2.reset_index(drop=True)
 df2["description"] = df2["description"].fillna("")
 df2["processed_desc1"] = df2["processed_desc1"].fillna("")
