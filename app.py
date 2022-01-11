@@ -1,4 +1,3 @@
-
 import flask
 import difflib
 import pandas as pd
@@ -8,15 +7,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = flask.Flask(__name__, template_folder='templates')
 
 df2 = pd.read_csv('./model/small_model.csv')
-df2 = df2.reset_index(drop=True)
-df2["description"] = df2["description"].fillna("")
-df2["processed_desc1"] = df2["processed_desc1"].fillna("")
 
 count = CountVectorizer(stop_words='english')
-
 count_matrix = count.fit_transform(df2['processed_desc1'])
-
-
 
 cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
 
