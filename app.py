@@ -6,7 +6,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from wordcloud import WordCloud, STOPWORDS
 
-result = pd.read_csv("merged_impact_appstore.csv")
+result = pd.read_csv("model.csv")
 result = result.drop_duplicates(subset=['title'])
 result = result[50000:]
 #result1 = result.loc[result['genre'] == TARGET_GENRE]
