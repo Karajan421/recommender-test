@@ -38,7 +38,7 @@ def get_recommendations(title) :
     return_df['Year'] = dat
     return return_df
 
- Set up the main route
+#Set up the main route
 @app.route('/', methods=['GET', 'POST'])
 
 def main():
