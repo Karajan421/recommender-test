@@ -1,3 +1,4 @@
+
 import flask
 import difflib
 import pandas as pd
@@ -6,7 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = flask.Flask(__name__, template_folder='templates')
 
-df2 = pd.read_csv('./model/appstore_full_infos2.csv')
+df2 = pd.read_csv('appstore_full_infos2.csv')
 #df2 = df2[95000:]
 df2 = df2.reset_index(drop=True)
 #df2["description"] = df2["description"].fillna("")
@@ -15,8 +16,6 @@ df2 = df2.reset_index(drop=True)
 count = CountVectorizer(stop_words='english')
 
 count_matrix = count.fit_transform(df2['processed_desc'])
-
-
 
 cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
 
@@ -33,12 +32,20 @@ def get_recommendations(title) :
     movie_indices = [i[0] for i in sim_scores]
     tit = df2['App_Name'].iloc[movie_indices]
     dat = df2['AppStore_Url'].iloc[movie_indices]
-    return_df = pd.DataFrame(columns=['Title','Link'])
+    rat = df2['Average_User_Rating'].iloc[movie_indices]
+    rev = df2['Reviews'].iloc[movie_indices]
+    des = df2['description'].iloc[movie_indices]
+    
+    return_df = pd.DataFrame(columns=['Title','Link', 'Rating', 'Reviews', 'Description'])
     return_df['Title'] = tit
     return_df['Link'] = dat
+    return_df['Rating'] = rat
+    return_df['Reviews'] = rev
+    return_df['Description'] = des
     return return_df
 
-#Set up the main route
+
+# Set up the main route
 @app.route('/', methods=['GET', 'POST'])
 
 def main():
@@ -55,11 +62,17 @@ def main():
             result_final = get_recommendations(m_name)
             names = []
             dates = []
+            rating =[]
+            reviews = []
+            description = []
             for i in range(len(result_final)):
                 names.append(result_final.iloc[i][0])
                 dates.append(result_final.iloc[i][1])
+                rating.append(result_final.iloc[i][2])
+                reviews.append(result_final.iloc[i][3])
+                description.append(result_final.iloc[i][4])
 
-            return flask.render_template('positive.html',movie_names=names,movie_date=dates,search_name=m_name)
+            return flask.render_template('positive.html',movie_names=names,movie_date=dates,movie_rating=rating,movie_reviews = reviews,movie_description=description, search_name=m_name)
 
 if __name__ == '__main__':
     app.run()
