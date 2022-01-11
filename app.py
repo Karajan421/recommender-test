@@ -6,7 +6,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = flask.Flask(__name__, template_folder='templates')
 
-df2 = pd.read_csv('./model/small_model.csv')
+df2 = pd.read_csv('./model/small_model3.csv')
 #df2 = df2[95000:]
 df2 = df2.reset_index(drop=True)
 df2["description"] = df2["description"].fillna("")
@@ -20,7 +20,7 @@ count_matrix = count.fit_transform(df2['processed_desc1'])
 
 cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
 
-df2 = df2.reset_index()
+#df2 = df2.reset_index()
 indices = pd.Series(df2.index, index=df2['title'])
 all_titles = [df2['title'][i] for i in range(len(df2['title']))]
 
