@@ -14,7 +14,7 @@ df2 = df2.reset_index(drop=True)
 
 count = CountVectorizer(stop_words='english')
 
-count_matrix = count.fit_transform(df2['App_Name'])
+count_matrix = count.fit_transform(df2['processed_desc'])
 
 
 
