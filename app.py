@@ -17,7 +17,7 @@ count = CountVectorizer(stop_words='english')
 #cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
 #np.save('similarity_matrix2', cosine_sim2)
 
-count_matrix = np.load("./model/similarity_matrix.npy", allow_pickle=True)
+count_matrix = np.load("./model/similarity_matrix.npy")
 
 indices = pd.Series(df2.index, index=df2['App_Name'])
 all_titles = [df2['App_Name'][i] for i in range(len(df2['App_Name']))]
