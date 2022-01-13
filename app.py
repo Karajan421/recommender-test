@@ -18,7 +18,7 @@ apps = db.Table('apps', metadata, autoload=True, autoload_with=db_connection)
 
 #df2 = pd.read_sql('SELECT * FROM apps', con=db_connection)
 
-df2 = pd.read_csv('appstore_minimal_infos.csv')
+df2 = pd.read_csv('./model/appstore_minimal_infos.csv')
 df2 = df2.reset_index(drop=True)
 
 count = CountVectorizer(stop_words='english')
