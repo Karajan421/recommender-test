@@ -5,6 +5,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy import create_engine
 import sqlalchemy as db
+import numpy as np
 
 app = flask.Flask(__name__, template_folder='templates')
 df2 = pd.read_csv('./model/appstore_minimal_infos.csv')
