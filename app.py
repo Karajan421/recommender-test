@@ -6,18 +6,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy import create_engine
 import sqlalchemy as db
 import numpy as np
+import pickle
 
 app = flask.Flask(__name__, template_folder='templates')
 df2 = pd.read_csv('./model/appstore_minimal_infos.csv')
 
 df2 = df2.reset_index(drop=True)
-count = CountVectorizer(stop_words='english')
 
+#count = CountVectorizer(stop_words='english')
 #count_matrix = count.fit_transform(df2['processed_desc'])
 #cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
 #np.save('similarity_matrix2', cosine_sim2)
 
-count_matrix = np.load("./model/similarity_matrix2.npy")
+#count_matrix = np.load("./model/similarity_matrix2.npy")
+count_matrix = pickle.load(open("./model/vector.pickel", "rb"))
+cosine_sim2 = count_matrix.transform(df2["processed_desc"])
 
 indices = pd.Series(df2.index, index=df2['App_Name'])
 all_titles = [df2['App_Name'][i] for i in range(len(df2['App_Name']))]
@@ -29,7 +32,7 @@ def get_recommendations(title) :
     connection = db_connection.connect()
     metadata = db.MetaData()
     apps = db.Table('apps', metadata, autoload=True, autoload_with=db_connection)
-    cosine_sim = cosine_similarity(count_matrix, count_matrix)
+    cosine_sim = cosine_similarity(cosine_sim2, cosine_sim2)
     idx = indices[title]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
