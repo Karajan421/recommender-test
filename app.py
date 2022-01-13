@@ -9,12 +9,18 @@ import sqlalchemy as db
 app = flask.Flask(__name__, template_folder='templates')
 df2 = pd.read_csv('./model/appstore_minimal_infos.csv')
 
+df2 = df2.reset_index(drop=True)
 count = CountVectorizer(stop_words='english')
-count_matrix = count.fit_transform(df2['processed_desc'])
-cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
+
+#count_matrix = count.fit_transform(df2['processed_desc'])
+#cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
+#np.save('similarity_matrix2', cosine_sim2)
+
+count_matrix = np.load("./model/similarity_matrix.npy", allow_pickle=True)
 
 indices = pd.Series(df2.index, index=df2['App_Name'])
 all_titles = [df2['App_Name'][i] for i in range(len(df2['App_Name']))]
+
 
 def get_recommendations(title) :
     db_connection_str = 'mysql+pymysql://kp8bfsn35swe3v5b:ck2zrlkwnwzvdohh@ohunm00fjsjs1uzy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/guqmq0edurs4j7o9'
