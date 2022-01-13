@@ -1,4 +1,3 @@
-
 import flask
 import difflib
 import pandas as pd
@@ -8,21 +7,9 @@ from sqlalchemy import create_engine
 import sqlalchemy as db
 
 app = flask.Flask(__name__, template_folder='templates')
-
-
-db_connection_str = 'mysql+pymysql://kp8bfsn35swe3v5b:ck2zrlkwnwzvdohh@ohunm00fjsjs1uzy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/guqmq0edurs4j7o9'
-db_connection = create_engine(db_connection_str)
-connection = db_connection.connect()
-metadata = db.MetaData()
-apps = db.Table('apps', metadata, autoload=True, autoload_with=db_connection)
-
-#df2 = pd.read_sql('SELECT * FROM apps', con=db_connection)
-
 df2 = pd.read_csv('./model/appstore_minimal_infos.csv')
-df2 = df2.reset_index(drop=True)
 
 count = CountVectorizer(stop_words='english')
-
 count_matrix = count.fit_transform(df2['processed_desc'])
 cosine_sim2 = cosine_similarity(count_matrix, count_matrix)
 
@@ -30,6 +17,11 @@ indices = pd.Series(df2.index, index=df2['App_Name'])
 all_titles = [df2['App_Name'][i] for i in range(len(df2['App_Name']))]
 
 def get_recommendations(title) :
+    db_connection_str = 'mysql+pymysql://kp8bfsn35swe3v5b:ck2zrlkwnwzvdohh@ohunm00fjsjs1uzy.cbetxkdyhwsb.us-east-1.rds.amazonaws.com/guqmq0edurs4j7o9'
+    db_connection = create_engine(db_connection_str)
+    connection = db_connection.connect()
+    metadata = db.MetaData()
+    apps = db.Table('apps', metadata, autoload=True, autoload_with=db_connection)
     cosine_sim = cosine_similarity(count_matrix, count_matrix)
     idx = indices[title]
     sim_scores = list(enumerate(cosine_sim[idx]))
@@ -37,11 +29,7 @@ def get_recommendations(title) :
     sim_scores = sim_scores[1:11]
     movie_indices = [i[0] for i in sim_scores]
     tit = df2['App_Name'].iloc[movie_indices]
-    #dat = df2['AppStore_Url'].iloc[movie_indices]
-    #rat = df2['Average_User_Rating'].iloc[movie_indices]
-    #rev = df2['Reviews'].iloc[movie_indices]
-    #des = df2['description'].iloc[movie_indices]
-    
+   
     query = db.select([apps.columns.title, apps.columns.description]).where(apps.columns.title.in_(tit))
     ResultProxy = connection.execute(query)
     data = ResultProxy.fetchall()
@@ -53,11 +41,6 @@ def get_recommendations(title) :
     df = pd.DataFrame(titles, columns=['titles'])
     df["description"] = description
     return_df = df
-    #return_df['Link'] = dat
-    #return_df['Rating'] = rat
-    #return_df['Reviews'] = rev
-    #return_df['Description'] = des
-    #return return_df
     return return_df
 
 # Set up the main route
